@@ -10,6 +10,17 @@
     <link rel = "icon" type = "image/png" href = "Media/Photos/AMCFavicon.png">
 </head>
 
+<script>
+    const button = document.getElementById('ask-btn');
+    button.addEventListener('click', () => {
+        // Add a simple animation effect
+        var x = event.clientX;
+        var y = event.clientY;
+
+        console.log("Clicked at: ", x, y);
+    });
+</script>
+
 <body class=" min-h-screen flex flex-col items-center py-12 px-4" style="background: linear-gradient(135deg, hsl(283, 90%, 20%), hsl(281, 91%, 44%));
 min-height: 100vh; margin: 0; color: white; scroll-behavior: smooth;">
     
@@ -28,7 +39,7 @@ min-height: 100vh; margin: 0; color: white; scroll-behavior: smooth;">
                 <label for="pdf-input" class="block text-sm font-medium text-slate-275">Upload your notes (PDF)</label>
                 
                 <input type="file" id="pdf-input" accept=".pdf" 
-                       class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                       class="block w-full text-sm text-slate-250 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                        file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition cursor-pointer text-slate-800">
                 <div id="upload-status" class="text-xs text-slate-275">No file uploaded yet.</div>
             </div>
