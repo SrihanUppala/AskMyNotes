@@ -14,11 +14,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const pdfInput      = document.querySelector("#pdf-input");
   const uploadStatus  = document.querySelector("#upload-status");
 
-  // — Question-type colour map —
-  const QTYPE_COLORS = {
-    definition : "px-2 py-1 rounded text-xs bg-blue-100 text-blue-700",
-    example    : "px-2 py-1 rounded text-xs bg-green-100 text-green-700",
-    comparison : "px-2 py-1 rounded text-xs bg-purple-100 text-purple-700",
+  // — Question-type class map (matches CSS .pill.definition/.example/.comparison) —
+  const QTYPE_CLASS = {
+    definition : "pill definition",
+    example    : "pill example",
+    comparison : "pill comparison",
   };
 
   // ─── Upload handler ────────────────────────────────────────────────────────
@@ -28,10 +28,18 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleUpload() {
     const file = pdfInput.files[0];
     if (!file) return;
-    uploadStatus.textContent = "Uploading '" + file.name + "'...";
-    uploadStatus.className   = "text-sm text-slate-50";
+
+    uploadStatus.textContent = "Uploading \"" + file.name + "\"...";
+    uploadStatus.className   = "";
+
     const fd = new FormData();
     fd.append("file", file);
+
+    // Simulated upload confirmation (replace with real fetch() to backend)
+    setTimeout(function () {
+      uploadStatus.textContent = "\"" + file.name + "\" is ready to search.";
+      uploadStatus.className   = "success";
+    }, 900);
   }
 
   // ─── Reset helper ──────────────────────────────────────────────────────────
@@ -40,10 +48,10 @@ document.addEventListener("DOMContentLoaded", function () {
     answerTextEl.textContent = "Your answer will appear here...";
     answerEl.classList.add("hidden");
 
-    qtypePill.className   = "px-2 py-1 rounded text-xs bg-slate-200 text-slate-700 hidden";
+    qtypePill.className   = "pill hidden";
     qtypePill.textContent = "";
 
-    toolPill.className   = "px-2 py-1 rounded text-xs bg-slate-200 text-slate-700 hidden";
+    toolPill.className   = "pill hidden";
     toolPill.textContent = "";
 
     sourcesEl.classList.add("hidden");
@@ -52,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ─── Remove the inline onclick that navigates away ─────────────────────────
+  // ─── Remove any inline onclick that navigates away ─────────────────────────
 
   askBtn.removeAttribute("onclick");
 
@@ -65,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!question) {
       statusEl.textContent = "Please type a question first.";
-      statusEl.className   = "text-sm text-red-500 mt-2 min-h-[1.25rem]";
+      statusEl.className   = "error";
       resetAnswerUI();
       return;
     }
@@ -73,31 +81,31 @@ document.addEventListener("DOMContentLoaded", function () {
     // Step 2 — Loading state
     resetAnswerUI();
     statusEl.textContent = "Thinking...";
-    statusEl.className   = "text-sm text-gray-500 mt-2 min-h-[1.25rem]";
+    statusEl.className   = "thinking";
+    askBtn.disabled = true;
 
     // Step 3 — Simulated delay (single setTimeout)
-    setTimeout(function ()
-    {
+    setTimeout(function () {
 
       const lower = question.toLowerCase();
 
       // Step 4 — Question type
       var placeholderType;
-      
+
       if (lower.startsWith("what is"))
         placeholderType = "definition";
-      
+
       else if (lower.startsWith("give") || lower.includes("example"))
         placeholderType = "example";
-      
+
       else if (
         lower.includes("vs") ||
         lower.includes("versus") ||
         lower.includes("compare") ||
         lower.includes("difference")
       )
-      placeholderType = "comparison";
-      
+        placeholderType = "comparison";
+
       else
         placeholderType = "definition";
 
@@ -110,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Step 6 — Placeholder answer
       var placeholderAnswer =
-        'Placeholder answer for: "' + question + '". Real answers will appear here once the backend is connected.';
+        "Placeholder answer for: \"" + question + "\". Real answers will appear here once the backend is connected.";
 
       // Step 7 — Populate UI
 
@@ -119,11 +127,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Question-type pill
       qtypePill.textContent = "type: " + placeholderType;
-      qtypePill.className   = QTYPE_COLORS[placeholderType];
+      qtypePill.className   = QTYPE_CLASS[placeholderType];
 
       // Tool pill
       toolPill.textContent = "tool: " + placeholderTool;
-      toolPill.className   = "px-2 py-1 rounded text-xs bg-slate-200 text-slate-700";
+      toolPill.className   = "pill";
 
       // Sources
       if (placeholderTool !== "calculator") {
@@ -144,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       answerEl.classList.remove("hidden");
       statusEl.textContent = "";
       statusEl.className   = "";
+      askBtn.disabled = false;
 
     }, 2300);
   });
