@@ -21,7 +21,7 @@ function App() {
     setAnswer("");
 
     try {
-      const response = await fetch("https://askmynotes-sees.onrender.com/", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/ask`, {
         method: "POST",
 
         headers: {
